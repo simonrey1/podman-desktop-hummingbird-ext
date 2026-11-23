@@ -27,7 +27,7 @@ import {
 } from '@podman-desktop/extension-hummingbird-core-api';
 
 import { browser } from '$app/env';
-import type { PodmanDesktopApi } from '../../../../types/podman-desktop-api';
+import type { PodmanDesktopApi, PodmanDesktopHistory } from '../../../../types/podman-desktop-api';
 
 /**
  * This file is the client side of the API. It is used to communicate with the backend, which allows
@@ -39,6 +39,7 @@ export interface RouterState {
 }
 
 let api: PodmanDesktopApi;
+let podmanDesktopHistory: PodmanDesktopHistory | undefined;
 let rpcBrowser: RpcBrowser;
 let routingAPI: RoutingApi;
 let hummingbirdAPI: HummingbirdApi;
@@ -51,6 +52,7 @@ let containerAPI: ContainerApi;
 if (browser) {
   api = acquirePodmanDesktopApi();
   rpcBrowser = new RpcBrowser(window, api);
+  podmanDesktopHistory = api?.history;
 
   // apis
   routingAPI = rpcBrowser.getProxy(RoutingApi);
@@ -93,7 +95,17 @@ if (browser) {
   });
 }
 
-export { rpcBrowser, routingAPI, hummingbirdAPI, providerAPI, imageAPI, dialogAPI, alternativesAPI, containerAPI };
+export {
+  podmanDesktopHistory,
+  rpcBrowser,
+  routingAPI,
+  hummingbirdAPI,
+  providerAPI,
+  imageAPI,
+  dialogAPI,
+  alternativesAPI,
+  containerAPI,
+};
 
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.

@@ -22,6 +22,13 @@ declare global {
     getState: () => any;
     postMessage: (msg: any) => void;
     setState: (newState: any) => void;
+    // Podman Desktop back/forward navigation history (undefined on older Podman Desktop versions)
+    history?: PodmanDesktopHistory;
+  }
+
+  export interface PodmanDesktopHistory {
+    push(entry: { id: string; label: string }): void;
+    onDidNavigate(listener: (event: { id: string }) => void): { dispose(): void };
   }
 
   function acquirePodmanDesktopApi(): PodmanDesktopApi;
@@ -29,4 +36,4 @@ declare global {
 
 // Creating a global variable to store the PodmanDesktopApi
 // allows the API to be accessed from anywhere in the codebase (types, testing, etc.)
-export { PodmanDesktopApi };
+export { PodmanDesktopApi, PodmanDesktopHistory };
