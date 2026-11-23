@@ -24,9 +24,14 @@ onMount(() => {
     // consume the pending route, so it is not replayed on the next webview mount
     routingAPI
       .readRoute()
-      .then(location => {
+      .then(async location => {
+        if (!location) return;
+        // after back/forward, Podman Desktop ignores the next push: it must be pushed exactly once.
+        // afterNavigate skips same-pathname navigations, so push it here in that case.
+        const samePage = new URL(location, page.url.origin).pathname === page.url.pathname;
         // eslint-disable-next-line svelte/no-navigation-without-resolve
-        if (location) return goto(location);
+        await goto(location);
+        if (samePage) await routingAPI.pushHistory(location, page.data.label ?? 'Hummingbird');
       })
       .catch(console.error);
   }).unsubscribe;
